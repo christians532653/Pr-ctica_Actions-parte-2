@@ -48,7 +48,20 @@ jobs:
         env:
           DEV_TOKEN: ${{ secrets.DEV_TOKEN }}
         run: |
-          powershell -Command "$dev = $env:DEV_TOKEN; $local = $env:LOCAL_DEV_TOKEN; Write-Host ('DEV_TOKEN longitud: ' + $dev.Length); Write-Host ('LOCAL_DEV_TOKEN longitud: ' + $local.Length); Write-Host ('LOCAL_DEV_TOKEN correcto: ' + ($local -eq 'DEV-999999')); Write-Host ('DEV_TOKEN correcto: ' + ($dev -eq 'DEV-123456')); Write-Host ('Tokens diferentes: ' + ($dev -ne $local))"
+          if "%DEV_TOKEN%"=="DEV-123456" (
+            echo DEV_TOKEN es el esperado
+          ) else (
+            echo DEV_TOKEN NO es el esperado
+            exit /b 1
+          )
+
+          if "%LOCAL_DEV_TOKEN%"=="DEV-999999" (
+            echo LOCAL_DEV_TOKEN es el esperado
+          ) else (
+            echo LOCAL_DEV_TOKEN NO es el esperado
+            exit /b 1
+          )
+
           if "%DEV_TOKEN%"=="%LOCAL_DEV_TOKEN%" (
             echo Los tokens coinciden
           ) else (

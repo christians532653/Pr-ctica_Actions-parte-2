@@ -10,25 +10,33 @@ on:
       - develop
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   updatereadme:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Actualizar README
         run: |
           echo "Añadida feature: ${{ github.head_ref || github.ref_name }}" >> README.md
 
       - name: Guardar cambios
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
           git diff --cached --quiet || git commit -m "Actualizar README"
-          git push
+          git push origin "HEAD:${BRANCH_NAME}"
 
   validate-dev:
     runs-on: self-hosted
